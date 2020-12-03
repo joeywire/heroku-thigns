@@ -6,6 +6,8 @@ dotenv.config();
 const express = require('express'); 
 const cors = require('cors'); 
 const port = process.env.PORT || 4000; //add fallback to 4000 - help if this is cloned and someone doesnt have the env varible port defined 
+//Path is a module that ships with node that allows us to do things with URLs - utilities library concerend with file system paths
+const path = require('path'); 
 
 console.log("web 36 rocks"); 
 console.log(__dirname); 
@@ -21,9 +23,16 @@ const app = express();
 //displayed on the client - work around for single origin policy 
 app.use(cors()); 
 app.use(express.json()); 
+app.use(express.static(path.join(__dirname, 'client/build')));
+
 //API
 app.use('/api/*', (_, res) => {
     res.json({ data: "WEB 36 WORKS"}); 
+})
+
+app.use('*', (_, res) => {
+    //send back index.html
+    res.sendFile(path.join(__dirname, 'client/build', 'index.html'))
 })
 
 app.listen(port, () => {
